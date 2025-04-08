@@ -7,24 +7,43 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+
     <main>
-      <label for="product">Product</label>
-      <input
-        type="text"
-        id="product"
-        name="product"
-        placeholder="Enter product name"
-        required
-      />
-
-      <br />
-      <br />
-
-      <div class="option-groups">
-        <button class="add-option-group">+ create option group</button>
+      <div class="option-groups-header">
+        <div>
+          <label for="product">Product</label>
+          <input
+            type="text"
+            id="product"
+            name="product"
+            placeholder="Enter product name"
+            required
+          />
+        </div>
+        <div>
+          <button id="generate-variants">Generate variants</button>
+        </div>
       </div>
-    </main>
+    
+      <div class="tabs">
+        <div class="tab-buttons">
+          <button class="tab-button active" data-tab="options">Option Groups</button>
+          <button class="tab-button" data-tab="variants">Variants (0)</button>
+        </div>
+    
+        <div class="tab-content active" data-tab="options">
+          <div class="option-groups">
+            <button class="add-option-group">+ create option group</button>
+          </div>
+        </div>
+    
+        <div class="tab-content" data-tab="variants">
+          <p>No variants yet.</p>
+        </div>
+      </div>
+    </main>    
 
     <script src="script.js"></script>
+    <script src="tabs.js"></script>
   </body>
 </html>
