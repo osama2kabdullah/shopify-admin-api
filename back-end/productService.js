@@ -5,7 +5,7 @@ const fs = require('fs'); // To log errors to a file (optional)
 // Load environment variables
 const shopifyStoreUrl = process.env.SHOPIFY_STORE_URL;
 const accessToken = process.env.SHOPIFY_ACCESS_TOKEN;
-const apiVersion = '2023-01'; // Change to the latest API version if needed
+const apiVersion = process.env.SHOPIFY_API_VERSION || '2023-10';
 
 // Shopify API endpoint
 const apiUrl = `${shopifyStoreUrl}/admin/api/${apiVersion}/graphql.json`;
