@@ -37,14 +37,14 @@ function createOptionGroup(groupIndex, inputIndex) {
     <input type="text" id="${optionNameId}" name="option-group" placeholder="Enter option group name" required>
     <br><br>
     <div class="option-values">
-      ${createValueField(1)}  <!-- Default first value -->
+      ${createValueField(1, groupIndex)}  <!-- Default first value -->
     </div>
     <button class="add-value">+ add value</button>
     <button class="delete-option-group">X</button>
   `;
 
   // Attach event listeners for "Add Value" and "Delete Option Group" buttons
-  newOptionGroup.querySelector(".add-value").addEventListener("click", () => addValue(newOptionGroup));
+  newOptionGroup.querySelector(".add-value").addEventListener("click", () => addValue(newOptionGroup, groupIndex));
   newOptionGroup.querySelector(".delete-option-group").addEventListener("click", () => deleteOptionGroup(newOptionGroup));
 
   // Ensure the event listener is attached to the first value's delete button
@@ -57,8 +57,8 @@ function createOptionGroup(groupIndex, inputIndex) {
 }
 
 // Function to create a value field (with unique IDs)
-function createValueField(valueIndex) {
-  const valueId = `option-value-${valueIndex}`;
+function createValueField(valueIndex, groupIndex) {
+  const valueId = `option-value-${valueIndex}-${groupIndex}`;
   return `
     <div class="option-value">
       <label for="${valueId}">Value ${valueIndex}:</label>
@@ -69,12 +69,12 @@ function createValueField(valueIndex) {
 }
 
 // Function to add a new value field within an option group
-function addValue(optionGroup) {
+function addValue(optionGroup, groupIndex) {
   const optionValuesContainer = optionGroup.querySelector(".option-values");
   const valueIndex = optionValuesContainer.querySelectorAll(".option-value").length + 1;
 
   // Create a new value field with unique ID
-  const newValueField = createValueField(valueIndex);
+  const newValueField = createValueField(valueIndex, groupIndex);
   optionValuesContainer.insertAdjacentHTML('beforeend', newValueField);
 
   // Attach event listener to the new delete button for the value field
