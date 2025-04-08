@@ -1,0 +1,31 @@
+{
+  "name": "shopify-custom-variant-backend",
+  "version": "1.0.0",
+  "description": "To overcome shopify 100 variant, I introduce a completly new formula using metaobject. by this backend app I will create metaobject into shopify. all over shopify admin API will use here",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osama2kabdullah/shopify-admin-api.git"
+  },
+  "keywords": [
+    "shopify",
+    "graphql",
+    "node"
+  ],
+  "author": "Md Abdullah",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/osama2kabdullah/shopify-admin-api/issues"
+  },
+  "homepage": "https://github.com/osama2kabdullah/shopify-admin-api#readme",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0"
+  }
+}
