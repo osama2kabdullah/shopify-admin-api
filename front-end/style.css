@@ -1,0 +1,21 @@
+main {
+  max-width: 600px;
+  margin: auto;
+}
+
+.option-group h3 {
+  margin: 0;
+}
+
+.option-group {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.delete-option-group {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
