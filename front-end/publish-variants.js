@@ -3,17 +3,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const publishedData = event.detail;
 
     console.log("Publishing Variants:", publishedData);
-
-    const productId = publishedData.productId; // Extract productId from event data
-
+    
     try {
       // Now that we enabled CORS, the backend will allow this request
-      const response = await fetch('http://localhost:3000/api/fetchProduct', {
+      const response = await fetch('http://localhost:3000/addmetafieldentry', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ productId }),
+        body: JSON.stringify(publishedData),
       });
 
       const data = await response.json();
