@@ -6,15 +6,37 @@ const { addmetafieldentry } = require('./productService'); // Assuming you have 
 
 const app = express();
 const port = process.env.PORT || 3000; // Default to port 3000 or use .env
+const API_SECRET = process.env.FRONTEND_API_KEY;
 
-// Enable CORS for all routes
-app.use(cors());
+// CORS for dev (optional)
+app.use(cors({
+  origin: 'http://127.0.0.1:5500',
+  methods: ['POST'],
+  allowedHeaders: ['Content-Type', 'x-api-key']
+}));
 
 // Middleware to parse JSON request bodies
 app.use(bodyParser.json());
 
-// Define the route to fetch product by ID (POST)
-app.post('/addmetafieldentry', async (req, res) => {
+// Auth middleware
+const apiAuthMiddleware = (req, res, next) => {
+  const clientKey = req.headers['x-api-key'];
+  if (!clientKey || clientKey !== API_SECRET) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+  next();
+};
+
+app.post('/api/verify', async (req, res) => {
+  const { secret } = req.body;
+  if (secret === API_SECRET) {
+    return res.status(200).json({ verified: true });
+  }
+  return res.status(403).json({ verified: false });
+});
+
+// API Routes
+app.post('/api/addmetafieldentry', apiAuthMiddleware, async (req, res) => {
   const { productId, variants } = req.body;
 
   if (!productId) {

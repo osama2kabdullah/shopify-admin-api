@@ -8,7 +8,12 @@
   </head>
   <body>
 
-    <main>
+    <div id="auth-gate" style="display: none; text-align: center; margin-top: 100px;">
+      <p id="auth-message">🔒 Password required to use this application</p>
+      <button id="auth-button">Enter Password</button>
+    </div>    
+
+    <main style="display: none;">
       <div class="option-groups-header">
         <div>
           <label for="product">Product</label>
@@ -43,7 +48,8 @@
         </div>
       </div>
     </main>    
-
+    
+    <script src="authentication.js"></script>
     <script src="option-group-management.js"></script>
     <script src="tabs.js"></script>
     <script src="generate-variants.js"></script>
