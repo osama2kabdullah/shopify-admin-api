@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  function publishButtonClickHandler(variants) {
+  function publishButtonClickHandler(submitButton, spinner) {
     const variantBoxes = document.querySelectorAll(".variant-box");
 
     const variantsData = Array.from(variantBoxes).map(box => {
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     });
 
-    const data = {variants: variantsData, productId: document.querySelector('input[name="product"]')?.value?.trim()};
+    const data = {variants: variantsData, productId: document.querySelector('input[name="product"]')?.value?.trim(), submitButton, spinner};
 
     // Dispatch custom event
     const event = new CustomEvent("publishVariants", { detail: data });
@@ -101,7 +101,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     form.addEventListener("submit", (event) => {
       event.preventDefault(); // Prevent default form submission
-      publishButtonClickHandler(variants);
+      const spinner = document.createElement("span");
+      spinner.className = "spinner";
+      spinner.textContent = "Loading...";
+      submitButton.disabled = true;
+      submitButton.appendChild(spinner);
+      publishButtonClickHandler(submitButton, spinner);
     });
 
     // Activate delete buttons

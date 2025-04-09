@@ -82,6 +82,11 @@ const createVariantMetaobject = async (variant) => {
     mutation {
       metaobjectCreate(metaobject: {
         type: "variant",
+        capabilities: {
+          publishable: {
+            status: ACTIVE
+          }
+        },
         fields: ${JSON.stringify(fields).replace(/"([^"]+)":/g, '$1:')}
       }) {
         metaobject {
@@ -139,6 +144,11 @@ const findOrCreateValues = async ({ values }) => {
       mutation {
         metaobjectCreate(metaobject: {
           type: "option_values",
+          capabilities: {
+            publishable: {
+              status: ACTIVE
+            }
+          },
           fields: [
             { key: "option", value: "${value}" }
           ]
@@ -155,7 +165,7 @@ const findOrCreateValues = async ({ values }) => {
       }
     `;
     const createRes = await makeShopifyApiRequest(mutation);
-    const created = createRes?.data?.metaobjectCreate?.metaobject;        
+    const created = createRes?.data?.metaobjectCreate?.metaobject; 
     if (created) {
       ids.push({id: created.id, value: value});
     }
