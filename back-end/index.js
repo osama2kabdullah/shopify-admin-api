@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors'); // Import the CORS middleware
 const bodyParser = require('body-parser');
-const { fetchProductById } = require('./productService'); // Assuming you have this logic
+const { addmetafieldentry } = require('./productService'); // Assuming you have this logic
 
 const app = express();
 const port = process.env.PORT || 3000; // Default to port 3000 or use .env
@@ -14,22 +14,22 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Define the route to fetch product by ID (POST)
-app.post('/api/fetchProduct', async (req, res) => {
-  const { productId } = req.body;
+app.post('/addmetafieldentry', async (req, res) => {
+  const { productId, variants } = req.body;
 
   if (!productId) {
     return res.status(400).json({ error: 'Product ID is required' });
   }
 
   try {
-    const product = await fetchProductById(productId);
-    if (product) {
-      res.status(200).json({ product });
-    } else {
-      res.status(404).json({ error: 'Product not found' });
+    const response = await addmetafieldentry(productId, variants);
+    if (response.errors) {
+      return res.status(400).json({ error: response.errors });
     }
+    res.status(200).json({ message: 'Metaobject created successfully', data: response });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch product' });
+    console.error('Error creating metaobject:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
