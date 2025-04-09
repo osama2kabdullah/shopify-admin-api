@@ -9,8 +9,16 @@ const port = process.env.PORT || 3000; // Default to port 3000 or use .env
 const API_SECRET = process.env.FRONTEND_API_KEY;
 
 // CORS for dev (optional)
+const allowedOrigins = ['http://127.0.0.1:5500', 'https://osama2kabdullah.github.io/shopify-admin-api/front-end/index.html'];
+
 app.use(cors({
-  origin: 'http://127.0.0.1:5500',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['POST'],
   allowedHeaders: ['Content-Type', 'x-api-key']
 }));
@@ -57,5 +65,5 @@ app.post('/api/addmetafieldentry', apiAuthMiddleware, async (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server running on PORT = ${port}`);
 });
