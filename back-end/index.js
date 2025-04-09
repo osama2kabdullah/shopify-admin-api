@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000; // Default to port 3000 or use .env
 const API_SECRET = process.env.FRONTEND_API_KEY;
 
 // CORS for dev (optional)
-const allowedOrigins = ['http://127.0.0.1:5500', 'https://osama2kabdullah.github.io/shopify-admin-api/front-end/index.html'];
+const allowedOrigins = ['http://127.0.0.1:5500', 'https://osama2kabdullah.github.io'];
 
 app.use(cors({
   origin: (origin, callback) => {
