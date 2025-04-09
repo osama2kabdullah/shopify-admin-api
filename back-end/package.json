@@ -4,7 +4,8 @@
   "description": "To overcome shopify 100 variant, I introduce a completly new formula using metaobject. by this backend app I will create metaobject into shopify. all over shopify admin API will use here",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
