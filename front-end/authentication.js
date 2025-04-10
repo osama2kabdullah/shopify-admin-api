@@ -6,7 +6,7 @@
 
   const verifyPassword = async (password) => {
     try {
-      const response = await fetch('https://shopify-admin-api.onrender.com/api/verify', {
+      const response = await fetch('http://localhost:3000/api/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ secret: password }),
