@@ -110,79 +110,8 @@ const createVariantMetaobject = async (variant) => {
   return createdMetaobject.id;
 };
 
-const findOrCreateValues = async ({ values }) => {
-  const ids = [];
-  const query = `
-    query {
-      metaobjects(first: 100, type: "option_values") {
-        edges {
-          node {
-            id
-            fields {
-              key
-              value
-            }
-          }
-        }
-      }
-    }
-  `;
-  const response = await makeShopifyApiRequest(query);
-  const dataFields = response?.data?.metaobjects?.edges.filter(edge => {
-    const value = edge.node.fields.find(field => field.key === 'option')?.value;
-    if (values.includes(value)) {
-      ids.push({id: edge.node.id, value: value}); // Push the id into the ids array
-      return true;
-    }
-    return false;
-  });
-
-  const existingValues = dataFields.map(edge => edge.node.fields.find(field => field.key === 'option')?.value);
-  const missingValues = values.filter(value => !existingValues.includes(value));
-  for (const value of missingValues) {
-    const mutation = `
-      mutation {
-        metaobjectCreate(metaobject: {
-          type: "option_values",
-          capabilities: {
-            publishable: {
-              status: ACTIVE
-            }
-          },
-          fields: [
-            { key: "option", value: "${value}" }
-          ]
-        }) {
-          metaobject {
-            id
-            type
-          }
-          userErrors {
-            field
-            message
-          }
-        }
-      }
-    `;
-    const createRes = await makeShopifyApiRequest(mutation);
-    const created = createRes?.data?.metaobjectCreate?.metaobject; 
-    if (created) {
-      ids.push({id: created.id, value: value});
-    }
-  }
-  return ids;
-}
-
 const processVariants = async (variants) => {
   const metaobjectIds = [];
-  const uniqueValues = [...new Set(variants.flatMap(item => item.values))];
-  const values_ids = await findOrCreateValues({ values: uniqueValues });
-  variants.forEach(variant => {
-    variant.values = variant.values.map(value => {
-      const matched = values_ids.find(item => item.value === value);
-      return matched ? matched.id : value;
-    });
-  });
   for (const variant of variants) {
     const metaobjectId = await createVariantMetaobject(variant);
     if (metaobjectId) {
