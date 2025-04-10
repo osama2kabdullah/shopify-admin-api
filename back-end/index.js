@@ -63,7 +63,11 @@ app.post('/api/addmetafieldentry', apiAuthMiddleware, async (req, res) => {
   }
 });
 
+app.get('/', apiAuthMiddleware, (req, res) => {
+  res.send('Hello World!, Develop by Osama Abdullah');
+});
+
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running on PORT = ${port}`);
+  console.log(`Server running on http://localhost:${port}; API_KEY = ${API_SECRET}`);
 });
