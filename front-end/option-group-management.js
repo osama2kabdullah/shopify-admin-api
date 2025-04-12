@@ -7,41 +7,64 @@ function getNextGroupId() {
 }
 
 // Function to create an option group element
-function createOptionGroup(groupIndex) {
+function createOptionGroup(groupIndex, groupData = null) {
   const optionGroup = document.createElement("div");
   optionGroup.classList.add("option-group");
 
   const groupId = groupIndex;
 
+  const valuesHTML = (groupData?.values || [""]).map((value, i) => createValueFieldHTML(groupId, i + 1, value)).join("");
+
   optionGroup.innerHTML = `
     <h3>Option Group ${groupIndex}</h3>
     <label for="option-name-${groupId}">Option Name:</label>
-    <input type="text" id="option-name-${groupId}" name="option-group" placeholder="Enter option group name" required>
+    <input type="text" id="option-name-${groupId}" name="option-group" placeholder="Enter option group name" value="${groupData?.name || ""}" required>
     <br><br>
     <div class="option-values">
-      ${createValueFieldHTML(groupId, 1)}
+      ${valuesHTML}
     </div>
     <button class="add-value">+ add value</button>
     <button class="delete-option-group">X</button>
   `;
 
   // Event listeners
-  optionGroup.querySelector(".add-value").addEventListener("click", () => addValue(optionGroup, groupId));
-  optionGroup.querySelector(".delete-option-group").addEventListener("click", () => deleteOptionGroup(optionGroup));
+  optionGroup.querySelector(".add-value").addEventListener("click", () => {
+    addValue(optionGroup, groupId);
+    saveToLocalStorage();
+  });
 
-  // Initial delete-value listener for the first value
-  const firstDelete = optionGroup.querySelector(".delete-value");
-  firstDelete.addEventListener("click", (e) => deleteValue(e.target, optionGroup, groupId));
+  optionGroup.querySelector(".delete-option-group").addEventListener("click", () => {
+    deleteOptionGroup(optionGroup);
+    saveToLocalStorage();
+  });
+
+  // Delete buttons + input events for each value field
+  const values = optionGroup.querySelectorAll(".option-value");
+  values.forEach(valueField => {
+    const deleteBtn = valueField.querySelector(".delete-value");
+    const input = valueField.querySelector("input");
+
+    deleteBtn.addEventListener("click", (e) => {
+      deleteValue(e.target, optionGroup, groupId);
+      saveToLocalStorage();
+    });
+
+    input.addEventListener("input", saveToLocalStorage);
+  });
+
+  // Group name input
+  const nameInput = optionGroup.querySelector("input[name='option-group']");
+  nameInput.addEventListener("input", saveToLocalStorage);
 
   return optionGroup;
 }
 
 // Create value field HTML (used for rendering a value)
-function createValueFieldHTML(groupId, valueIndex) {
+function createValueFieldHTML(groupId, valueIndex, value = "") {
   return `
     <div class="option-value">
       <label for="option-value-${groupId}-${valueIndex}">Value ${valueIndex}:</label>
-      <input type="text" id="option-value-${groupId}-${valueIndex}" name="option-value" placeholder="Enter option value" required>
+      <input type="text" id="option-value-${groupId}-${valueIndex}" name="option-value" value="${value}" placeholder="Enter option value" required>
       <button class="delete-value">X</button>
     </div>
   `;
@@ -55,8 +78,16 @@ function addValue(optionGroup, groupId) {
 
   valuesContainer.insertAdjacentHTML("beforeend", createValueFieldHTML(groupId, newIndex));
 
-  const newDeleteBtn = valuesContainer.lastElementChild.querySelector(".delete-value");
-  newDeleteBtn.addEventListener("click", (e) => deleteValue(e.target, optionGroup, groupId));
+  const newField = valuesContainer.lastElementChild;
+  const newDeleteBtn = newField.querySelector(".delete-value");
+  const newInput = newField.querySelector("input");
+
+  newDeleteBtn.addEventListener("click", (e) => {
+    deleteValue(e.target, optionGroup, groupId);
+    saveToLocalStorage();
+  });
+
+  newInput.addEventListener("input", saveToLocalStorage);
 }
 
 // Delete value field, ensuring at least one remains
@@ -102,9 +133,34 @@ function updateGroupDisplayIndices() {
   });
 }
 
+// Save all current groups and values to localStorage
+function saveToLocalStorage() {
+  const groups = document.querySelectorAll(".option-group");
+  const data = Array.from(groups).map(group => {
+    const name = group.querySelector("input[name='option-group']").value;
+    const values = Array.from(group.querySelectorAll("input[name='option-value']")).map(v => v.value);
+    return { name, values };
+  });
+
+  localStorage.setItem("optionGroupsData", JSON.stringify(data));
+}
+
+// Load groups from localStorage if present
+function loadFromLocalStorage() {
+  const savedData = JSON.parse(localStorage.getItem("optionGroupsData")) || [];
+  savedData.forEach((groupData, index) => {
+    const newGroup = createOptionGroup(index + 1, groupData);
+    optionGroupsContainer.insertBefore(newGroup, addOptionGroupButton);
+  });
+}
+
 // Add option group button click
 addOptionGroupButton.addEventListener("click", () => {
   const nextGroupId = getNextGroupId();
   const newGroup = createOptionGroup(nextGroupId);
   optionGroupsContainer.insertBefore(newGroup, addOptionGroupButton);
+  saveToLocalStorage();
 });
+
+// Init
+document.addEventListener("DOMContentLoaded", loadFromLocalStorage);

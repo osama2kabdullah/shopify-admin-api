@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateVariantTab(combinations.length);
     renderVariantsList(combinations);
+    saveVariantsToLocalStorage(combinations); // ✅ Save
   });
 
   function cartesianProduct(arrays) {
@@ -33,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function generateVariantMarkup(variant) {
+  function generateVariantMarkup(variant, saved = {}) {
     const variantText = variant.join(" / ");
     const variantId = `variant-${Math.random().toString(36).substr(2, 9)}`;
 
@@ -42,12 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <h3>${variantText}</h3>
         <label>
           Image URL:
-          <input type="text" form="variants-publish" required name="image-url" placeholder="Enter image URL" />
+          <input type="text" form="variants-publish" required name="image-url" placeholder="Enter image URL" value="${saved.image || ""}" />
         </label>
         <br/>
         <label>
           Variant ID:
-          <input type="text" form="variants-publish" required name="variant-id" placeholder="Enter variant ID" />
+          <input type="text" form="variants-publish" required name="variant-id" placeholder="Enter variant ID" value="${saved.variantId || ""}" />
         </label>
         <button class="delete-variant" data-target="${variantId}">X</button>
       </div>
@@ -65,14 +66,18 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     });
 
-    const data = {variants: variantsData, productId: document.querySelector('input[name="product"]')?.value?.trim(), submitButton, spinner};
+    const data = {
+      variants: variantsData,
+      productId: document.querySelector('input[name="product"]')?.value?.trim(),
+      submitButton,
+      spinner
+    };
 
-    // Dispatch custom event
     const event = new CustomEvent("publishVariants", { detail: data });
     document.dispatchEvent(event);
   }
 
-  function renderVariantsList(variants) {
+  function renderVariantsList(variants, savedVariants = []) {
     const variantTabContent = document.querySelector('.tab-content[data-tab="variants"]');
 
     if (!variantTabContent) return;
@@ -82,9 +87,13 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    variantTabContent.innerHTML = ""; // Clear previous content
+    variantTabContent.innerHTML = "";
 
-    const boxesHTML = variants.map(generateVariantMarkup).join("");
+    const boxesHTML = variants.map(variant => {
+      const existing = savedVariants.find(saved => saved.values.join(" / ") === variant.join(" / "));
+      return generateVariantMarkup(variant, existing || {});
+    }).join("");
+
     variantTabContent.innerHTML = boxesHTML;
 
     const form = document.createElement("form");
@@ -100,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     variantTabContent.appendChild(form);
 
     form.addEventListener("submit", (event) => {
-      event.preventDefault(); // Prevent default form submission
+      event.preventDefault();
       const spinner = document.createElement("span");
       spinner.className = "spinner";
       spinner.textContent = "Loading...";
@@ -116,14 +125,56 @@ document.addEventListener("DOMContentLoaded", () => {
         const targetBox = document.getElementById(targetId);
         if (targetBox) targetBox.remove();
 
-        // Update the variant count
         const updatedCount = document.querySelectorAll(".variant-box").length;
         updateVariantTab(updatedCount);
+
+        saveCurrentVariants(); // ✅ Update saved data
 
         if (updatedCount === 0) {
           variantTabContent.innerHTML = "<p>No variants yet.</p>";
         }
       });
     });
+
+    // ✅ Add live input change saving
+    variantTabContent.querySelectorAll('.variant-box input').forEach(input => {
+      input.addEventListener("input", saveCurrentVariants);
+    });
   }
+
+  // ✅ Save variants to localStorage
+  function saveVariantsToLocalStorage(variantList) {
+    const variantBoxes = variantList.map(values => ({
+      values,
+      image: "",
+      variantId: ""
+    }));
+    localStorage.setItem("variantsData", JSON.stringify(variantBoxes));
+  }
+
+  // ✅ Save current user-edited variant input values
+  function saveCurrentVariants() {
+    const boxes = document.querySelectorAll(".variant-box");
+    const data = Array.from(boxes).map(box => {
+      return {
+        values: box.querySelector("h3")?.textContent?.trim().split(" / ") || [],
+        image: box.querySelector('input[name="image-url"]')?.value?.trim(),
+        variantId: box.querySelector('input[name="variant-id"]')?.value?.trim()
+      };
+    });
+    localStorage.setItem("variantsData", JSON.stringify(data));
+  }
+
+  // ✅ Load from localStorage if found
+  function loadVariantsFromLocalStorage() {
+    const saved = JSON.parse(localStorage.getItem("variantsData") || "[]");
+    if (!saved.length) return;
+
+    const variantsOnly = saved.map(v => v.values);
+    renderVariantsList(variantsOnly, saved);
+    updateVariantTab(variantsOnly.length);
+  }
+
+  // Init on load
+  loadVariantsFromLocalStorage();
 });
