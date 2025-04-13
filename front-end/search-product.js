@@ -10,45 +10,44 @@ class SearchForm extends HTMLElement {
     this.results = this.querySelector("#results");
     this.form = this.querySelector("#search-product");
     this.searchButton = this.querySelector("#search-product-button");
-
+  
     this.input.addEventListener("input", this.handleInput.bind(this));
     this.form.addEventListener("submit", this.handleSubmit.bind(this));
     this.suggestions.addEventListener("click", this.handleSuggestionClick.bind(this));
     this.input.addEventListener("focus", this.handleFocus.bind(this));
     this.input.addEventListener("click", this.handleFocus.bind(this));
     document.addEventListener("click", this.handleOutsideClick.bind(this));
-
+  
+    // 🔁 Handle browser back/forward buttons
+    window.addEventListener("popstate", () => {
+      this.loadFromURL();
+    });
+  
     this.loadFromURL();
-  }
+  }  
 
   loadFromURL() {
     const params = new URLSearchParams(window.location.search);
     const query = params.get("product");
-    const view = params.get("view");
-    const id = params.get("id");
+    const detailId = params.get("detailId");
   
     if (query) {
       this.input.value = query;
-      this.fetchSuggestions(query); // preload optional
+      this.fetchSuggestions(query);
+      this.handleSubmit(); // Will call updateURL with pushState
+    }
   
-      // Decide what to load
-      if (view === "details" && id) {
-        // still load results in background for return
-        this.handleSubmit().then(() => {
-          this.showDetailView(id);
-        });
-      } else {
-        this.handleSubmit();
-      }
+    if (detailId) {
+      this.showDetails(detailId);
     }
   }  
 
   updateURL(query) {
-    const params = new URLSearchParams(window.location.search);
-    params.set("product", query);
+    const params = new URLSearchParams();
+    params.set("product", query); // start fresh — don't inherit old detailId
     const newURL = `${window.location.pathname}?${params.toString()}`;
-    history.replaceState({}, "", newURL);
-  }
+    history.pushState({}, "", newURL); // 👈 pushState instead of replaceState
+  }   
 
   handleInput(e) {
     const value = e.target.value.toLowerCase().trim();
