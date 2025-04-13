@@ -224,10 +224,9 @@ class SearchForm extends HTMLElement {
     this.results.innerHTML = `
       <div class="detail-view">
         <button id="back-to-results" style="margin-bottom: 10px;">⬅ Back</button>
-        <div>Hello World for user ID: ${id}</div>
+        <detail-view></detail-view>
       </div>
-    `;
-  
+    `;  
     // Show results container (if hidden)
     this.results.style.display = "block";
   

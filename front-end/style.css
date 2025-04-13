@@ -3,6 +3,63 @@ main {
   margin: auto;
 }
 
+/* tabs */
+.variant-box h3,
+.option-group h3 {
+  margin: 0;
+}
+
+.option-groups-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.variant-box,
+.option-group {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.delete-variant,
+.delete-option-group {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.tabs {
+  margin-top: 40px;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tab-button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px 4px 0 0;
+  background-color: transparent;
+}
+
+.tab-button.active {
+  border-bottom: 1px solid #000;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
 /* default style */
 .spinner {
   border: 2px solid #f3f3f3;
