@@ -75,6 +75,6 @@ search-form form input[type="search"] {
 
 .results-container {
   margin-top: 15px;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #9a9a9a;
   padding-top: 10px;
 }

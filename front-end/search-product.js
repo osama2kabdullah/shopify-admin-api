@@ -24,12 +24,24 @@ class SearchForm extends HTMLElement {
   loadFromURL() {
     const params = new URLSearchParams(window.location.search);
     const query = params.get("product");
+    const view = params.get("view");
+    const id = params.get("id");
+  
     if (query) {
       this.input.value = query;
-      this.fetchSuggestions(query); // Optional preload
-      this.handleSubmit(); // Auto search on load
+      this.fetchSuggestions(query); // preload optional
+  
+      // Decide what to load
+      if (view === "details" && id) {
+        // still load results in background for return
+        this.handleSubmit().then(() => {
+          this.showDetailView(id);
+        });
+      } else {
+        this.handleSubmit();
+      }
     }
-  }
+  }  
 
   updateURL(query) {
     const params = new URLSearchParams(window.location.search);
@@ -170,14 +182,69 @@ class SearchForm extends HTMLElement {
       .map(
         (user) => `
           <div>
-            <strong>${user.name}</strong><br/>
+            <strong class="result-title" data-id="${user.id}" style="cursor:pointer; color:blue; text-decoration:underline;">
+              ${user.name}
+            </strong>
+            <br/>
             <small>${user.email}</small>
           </div>
         `
       )
       .join("<hr/>");
     this.results.style.display = "block";
+    this.results.querySelectorAll(".result-title").forEach((el) => {
+      el.addEventListener("click", (e) => {
+        const id = e.target.dataset.id;
+        this.showDetailView(id);
+      });
+    });    
   }
+
+  backToSearchResults() {
+    const params = new URLSearchParams(window.location.search);
+    params.delete("view");
+    params.delete("id");
+    const newURL = `${window.location.pathname}?${params.toString()}`;
+    history.replaceState({}, "", newURL);
+  
+    // Re-render from cached results (so no refetch)
+    const query = this.input.value.trim().toLowerCase();
+    if (query && this.cachedResults[query]) {
+      this.renderResults(this.cachedResults[query]);
+    }
+  }  
+
+  showDetailView(id) {
+    // Save state in URL
+    const params = new URLSearchParams(window.location.search);
+    params.set("view", "details");
+    params.set("id", id);
+    const newURL = `${window.location.pathname}?${params.toString()}`;
+    history.replaceState({}, "", newURL);
+  
+    // Clear previous UI
+    this.results.innerHTML = "";
+  
+    // Inject your detail HTML here (for now just dummy)
+    this.results.innerHTML = `
+      <div class="detail-view">
+        <button id="back-to-results" style="margin-bottom: 10px;">⬅ Back</button>
+        <div>Hello World for user ID: ${id}</div>
+      </div>
+    `;
+  
+    // Show results container (if hidden)
+    this.results.style.display = "block";
+  
+    // Hide clear button
+    const clearButton = this.querySelector("#clear-search-button");
+    if (clearButton) clearButton.remove();
+  
+    // Handle back button
+    this.results.querySelector("#back-to-results").addEventListener("click", () => {
+      this.backToSearchResults();
+    });
+  }  
 
   addClearSearchButton() {
     const clearButton = document.createElement("a");
