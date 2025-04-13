@@ -29,17 +29,17 @@ class SearchForm extends HTMLElement {
   loadFromURL() {
     const params = new URLSearchParams(window.location.search);
     const query = params.get("product");
-    const detailId = params.get("detailId");
+    const detailId = params.get("id");
+    this.input.value = query;
   
+    if (detailId) {
+      this.showDetailView(detailId);
+      return;
+    }
     if (query) {
-      this.input.value = query;
-      this.fetchSuggestions(query);
       this.handleSubmit(); // Will call updateURL with pushState
     }
   
-    if (detailId) {
-      this.showDetails(detailId);
-    }
   }  
 
   updateURL(query) {
@@ -206,11 +206,7 @@ class SearchForm extends HTMLElement {
     const newURL = `${window.location.pathname}?${params.toString()}`;
     history.replaceState({}, "", newURL);
   
-    // Re-render from cached results (so no refetch)
-    const query = this.input.value.trim().toLowerCase();
-    if (query && this.cachedResults[query]) {
-      this.renderResults(this.cachedResults[query]);
-    }
+    this.loadFromURL();
   }  
 
   showDetailView(id) {
