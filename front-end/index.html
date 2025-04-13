@@ -1,58 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Custom Variant</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Custom Variant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
-    <div id="auth-gate" style="display: none; text-align: center; margin-top: 100px;">
-      <p id="auth-message">🔒 Password required to use this application</p>
-      <button id="auth-button">Enter Password</button>
-    </div>    
+  <div id="auth-gate" style="display: none; text-align: center; margin-top: 100px;">
+    <p id="auth-message">🔒 Password required to use this application</p>
+    <button id="auth-button">Enter Password</button>
+  </div>    
 
-    <main style="display: none;">
-      <div class="option-groups-header">
-        <div>
-          <label for="product">Product</label>
-          <input
-            type="text"
-            id="product"
-            name="product"
-            placeholder="Enter product name"
-            form="variants-publish" 
-            required
-          />
-        </div>
-        <div>
-          <button id="generate-variants">Generate variants</button>
-        </div>
-      </div>
-    
-      <div class="tabs">
-        <div class="tab-buttons">
-          <button class="tab-button active" data-tab="options">Option Groups</button>
-          <button class="tab-button" data-tab="variants">Variants (0)</button>
-        </div>
-    
-        <div class="tab-content active" data-tab="options">
-          <div class="option-groups">
-            <button class="add-option-group">+ create option group</button>
-          </div>
-        </div>
-    
-        <div class="tab-content" data-tab="variants">
-          <p>No variants yet.</p>
-        </div>
-      </div>
-    </main>    
-    
-    <script src="authentication.js"></script>
-    <script src="option-group-management.js"></script>
-    <script src="tabs.js"></script>
-    <script src="generate-variants.js"></script>
-    <script src="publish-variants.js"></script>
-  </body>
+  <main style="display: none;">
+    <search-form>
+      <form name="search-product" id="search-product" method="get" action="https://jsonplaceholder.typicode.com/users" autocomplete="off">
+        <label for="product">Product Name:</label>
+        <input
+          type="search"
+          id="product"
+          name="product"
+          placeholder="Enter product name"
+          required
+        />
+        <button type="submit" id="search-product-button">Search</button>
+      </form>
+
+      <!-- Live Suggestions -->
+      <ul id="suggestions" style="display: none;" class="suggestions-list"></ul>
+
+      <!-- Search Results -->
+      <div id="results" style="display: none;" class="results-container"></div>
+    </search-form>
+  </main>
+
+  <script src="authentication.js"></script>
+  <script src="option-group-management.js"></script>
+  <script src="tabs.js"></script>
+  <script src="generate-variants.js"></script>
+  <script src="publish-variants.js"></script>
+  <script src="search-product.js"></script>
+</body>
 </html>
