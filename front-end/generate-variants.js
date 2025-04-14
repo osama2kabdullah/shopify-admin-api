@@ -1,12 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM fully loaded");
   const generateButton = document.getElementById("generate-variants");
 
   generateButton.addEventListener("click", () => {
+
+    console.log("Generate Variants Button Clicked");
+
     const allOptionGroups = document.querySelectorAll(".option-group");
+
+    console.log("Option Groups:", allOptionGroups);
 
     const optionValues = Array.from(allOptionGroups).map(group => {
       const inputs = group.querySelectorAll(".option-value input");
-      return Array.from(inputs).map(input => input.value.trim()).filter(Boolean);
+      const values = Array.from(inputs)
+        .map(input => input.value.trim())
+        .filter(Boolean);
+      console.log("Collected Values:", values);
+      return values;
     });
 
     if (optionValues.some(values => values.length === 0)) {
@@ -18,9 +28,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateVariantTab(combinations.length);
     renderVariantsList(combinations);
-    saveVariantsToLocalStorage(combinations); // ✅ Save
+    saveVariantsToLocalStorage(combinations);
+    
+    // Switch to variants tab after generation (from reference code)
+    switchToVariantsTab();
   });
 
+  // Tab switching function from reference code
+  function switchToVariantsTab() {
+    const optionsTabButton = document.querySelector('.tab-button[data-tab="options"]');
+    const variantsTabButton = document.querySelector('.tab-button[data-tab="variants"]');
+    const optionsTabContent = document.querySelector('.tab-content[data-tab="options"]');
+    const variantsTabContent = document.querySelector('.tab-content[data-tab="variants"]');
+    
+    // First remove active classes
+    optionsTabButton.classList.remove("active");
+    optionsTabContent.classList.remove("active");
+    
+    // Then add active classes to variants
+    variantsTabButton.classList.add("active");
+    variantsTabContent.classList.add("active");
+    
+    // Force a reflow to ensure transition works
+    void variantsTabContent.offsetWidth;
+    
+    // Scroll to variants section
+    variantsTabContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
   function cartesianProduct(arrays) {
     return arrays.reduce((acc, curr) => {
       return acc.flatMap(a => curr.map(b => [...a, b]));
@@ -128,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const updatedCount = document.querySelectorAll(".variant-box").length;
         updateVariantTab(updatedCount);
 
-        saveCurrentVariants(); // ✅ Update saved data
+        saveCurrentVariants();
 
         if (updatedCount === 0) {
           variantTabContent.innerHTML = "<p>No variants yet.</p>";
@@ -136,13 +170,12 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // ✅ Add live input change saving
+    // Add live input change saving
     variantTabContent.querySelectorAll('.variant-box input').forEach(input => {
       input.addEventListener("input", saveCurrentVariants);
     });
   }
 
-  // ✅ Save variants to localStorage
   function saveVariantsToLocalStorage(variantList) {
     const variantBoxes = variantList.map(values => ({
       values,
@@ -152,7 +185,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("variantsData", JSON.stringify(variantBoxes));
   }
 
-  // ✅ Save current user-edited variant input values
   function saveCurrentVariants() {
     const boxes = document.querySelectorAll(".variant-box");
     const data = Array.from(boxes).map(box => {
@@ -165,7 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem("variantsData", JSON.stringify(data));
   }
 
-  // ✅ Load from localStorage if found
   function loadVariantsFromLocalStorage() {
     const saved = JSON.parse(localStorage.getItem("variantsData") || "[]");
     if (!saved.length) return;
