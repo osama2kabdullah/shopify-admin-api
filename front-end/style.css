@@ -129,19 +129,6 @@ body {
 }
 
 
-.top-search-box {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 0;
-  width: 600px; /* or match your actual search box width */
-  background: white;
-  padding: 10px;
-  z-index: 1000;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
 .kimi-search-form {
   position: absolute;
   top: 50%;
@@ -156,5 +143,53 @@ body {
   top: 30px;
   transform: translate(-50%, 0); /* Remove vertical center shift */
   opacity: 1;
+}
+
+/* Suggestions List Styling */
+.suggestions-list {
+  position: absolute;
+  width: calc(100% - 2px); /* Match input width accounting for border */
+  max-width: 600px; /* Or whatever max width you prefer */
+ 
+  border: 1px solid #ddd;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: -1px; /* Align with input */
+  padding: 0;
+  list-style: none;
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.suggestions-list li {
+  padding: 10px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+}
+
+.suggestions-list li:last-child {
+  border-bottom: none;
+}
+
+.suggestions-list li:hover {
+  background-color: pink;
+}
+
+.suggestions-list li.highlighted {
+  background-color: #e9f7fe;
+}
+
+/* Search icon in suggestions */
+.suggestions-list li .search-icon {
+  margin-right: 10px;
+  color: #888;
+}
+
+/* Search input container adjustment */
+.search-input-wrapper {
+  position: relative;
 }
 
