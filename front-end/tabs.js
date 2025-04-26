@@ -16,328 +16,7 @@ class DetailView extends HTMLElement {
   initMarkup() {
     this.innerHTML = `
       <style>
-        .option-groups {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 20px;
-        }
         
-        .temp-option-group {
-          background: white;
-          padding: 20px;
-          border-radius: 8px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .option-input-section {
-          margin-bottom: 20px;
-        }
-        
-        .input-title {
-          display: block;
-          font-size: 14px;
-          font-weight: 500;
-          margin-bottom: 8px;
-          color: #333;
-        }
-        
-        .option-input {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 14px;
-        }
-        
-        .error-message {
-          color: #d32f2f;
-          font-size: 13px;
-          margin-top: 5px;
-          display: none;
-        }
-        
-        .form-actions {
-          display: flex;
-          justify-content: flex-end;
-          gap: 10px;
-          margin-top: 20px;
-        }
-        
-        .action-btn {
-          padding: 8px 16px;
-          border-radius: 4px;
-          font-size: 14px;
-          cursor: pointer;
-          border: none;
-        }
-        
-        .delete-btn {
-          background: none;
-          color: #d32f2f;
-          border: 1px solid #d32f2f;
-        }
-        
-        .done-btn {
-          background: #1976d2;
-          color: white;
-        }
-        
-        .add-option-group {
-          width: 100%;
-          padding: 12px;
-          background: white;
-          border: 1px dashed #ddd;
-          border-radius: 8px;
-          cursor: pointer;
-          text-align: center;
-          color: #1976d2;
-          font-size: 14px;
-          font-weight: 500;
-        }
-        
-        .saved-option {
-          background: white;
-          padding: 15px;
-          border-radius: 8px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-          position: relative;
-          transition: all 0.2s ease;
-        }
-
-        .saved-option:hover {
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  transform: translateY(-1px);
-}
-
-.saved-option:active {
-  transform: translateY(0);
-}
-        
-        .saved-option-name {
-          font-weight: bold;
-          color: black;
-          margin-bottom: 10px;
-          padding-right: 20px;
-        }
-        
-        .saved-values-container {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-        }
-        
-        .saved-value {
-          background: #f5f5f5;
-          color: black;
-          padding: 6px 12px;
-          border-radius: 4px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        
-        .saved-value button {
-          background: none;
-          border: none;
-          color: #d32f2f;
-          cursor: pointer;
-          padding: 0;
-          font-size: 16px;
-        }
-        
-        .values-list {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-        
-        .delete-option {
-          position: absolute;
-          top: 15px;
-          right: 15px;
-          background: none;
-          border: none;
-          color: #d32f2f;
-          cursor: pointer;
-          font-size: 18px;
-          padding: 0;
-          z-index: 2
-        }
-        
-        .variants-section {
-          margin-top: 30px;
-          background: white;
-          
-          padding: 20px;
-          border-radius: 8px;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-          display: none;
-        }
-        
-        .variants-section.visible {
-          display: block;
-        }
-        
-        .variants-header {
-          font-size: 18px;
-          font-weight: bold;
-          margin-bottom: 20px;
-        }
-        
-        .variants-table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-          color: black;
-        }
-        
-        .variants-table th {
-          text-align: left;
-          padding: 10px;
-          border-bottom: 1px solid #ddd;
-          font-weight: 500;
-        }
-        
-        .variants-table td {
-          padding: 10px;
-          border-bottom: 1px solid #eee;
-        }
-        
-        .variant-checkbox {
-          margin-right: 10px;
-        }
-        
-        .variant-price-input {
-          padding: 8px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          width: 100px;
-        }
-        
-        .add-another-value {
-          margin-top: 10px;
-          background: none;
-          border: none;
-          color: #1976d2;
-          cursor: pointer;
-          font-size: 14px;
-          padding: 0;
-          text-align: left;
-        }
-        
-        .edit-option {
-          position: absolute;
-          top: 15px;
-          right: 40px;
-          background: none;
-          border: none;
-          color: #1976d2;
-          cursor: pointer;
-          font-size: 14px;
-          padding: 0;
-        }
-        
-        .bulk-actions {
-          display: none;
-          margin-top: 10px;
-        }
-        
-        .bulk-actions.visible {
-          display: flex;
-          gap: 10px;
-        }
-        
-        .bulk-delete-btn {
-          background: #d32f2f;
-          color: white;
-          border: none;
-          padding: 8px 16px;
-          border-radius: 4px;
-          cursor: pointer;
-        }
-        
-        .variants-table tr {
-          cursor: pointer;
-        }
-        
-        .variants-table tr:hover {
-          background-color: #f5f5f5;
-        }
-     <!-- Image and save button styles are here -->
-   .image-upload {
-        border: 2px dashed #ddd;
-        border-radius: 8px;
-        padding: 15px;
-        text-align: center;
-        margin: 10px 0;
-        cursor: pointer;
-        position: relative;
-        min-height: 80px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-      }
-      .image-upload:hover {
-        border-color: #1976d2;
-        background: #f5f9ff;
-      }
-      .upload-icon {
-        font-size: 24px;
-        color: #1976d2;
-        margin-bottom: 8px;
-      }
-      .upload-text {
-        font-size: 14px;
-        color: #666;
-      }
-      .image-preview {
-        max-width: 100%;
-        max-height: 80px;
-        border-radius: 4px;
-        display: none;
-      }
-      .image-upload.has-image .upload-icon,
-      .image-upload.has-image .upload-text {
-        display: none;
-      }
-      .image-upload.has-image .image-preview {
-        display: block;
-      }
-      .remove-image {
-        position: absolute;
-        top: 5px;
-        right: 5px;
-        background: rgba(0,0,0,0.5);
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-        cursor: pointer;
-        display: none;
-      }
-      .image-upload.has-image:hover .remove-image {
-        display: block;
-      }
-      .save-all-btn {
-        background: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        margin-top: 20px;
-        font-size: 16px;
-      }
-      .save-all-btn:hover {
-        background: #45a049;
-      }
 
       </style>
       
@@ -534,11 +213,37 @@ toggleVariantSelection(checkbox) {
 
   updateVariantsVisibility() {
     const variantsSection = this.querySelector("#variants-section");
-    const hasOptions = this.querySelectorAll(".saved-option").length > 0 || 
-                      this.querySelector(".temp-option-group") !== null;
+    const hasOptions = this.hasValidOptions();
     
     variantsSection.classList.toggle("visible", hasOptions);
   }
+  
+  // Add this new helper method
+  hasValidOptions() {
+    // Check if there are any saved options with at least one value
+    const savedOptions = this.querySelectorAll(".saved-option");
+    for (const option of savedOptions) {
+      const values = option.querySelectorAll(".saved-value");
+      if (values.length > 0) {
+        return true;
+      }
+    }
+    
+    // Check if there's a temporary option being edited with values
+    const tempOption = this.querySelector(".temp-option-group");
+    if (tempOption) {
+      const tempValues = tempOption.querySelectorAll(".temp-option-value");
+      for (const input of tempValues) {
+        if (input.value.trim() !== "") {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+
+
 
   initOptionGroupLogic() {
     const addOptionGroupButton = this.querySelector(".add-option-group");
@@ -923,17 +628,106 @@ toggleVariantSelection(checkbox) {
             ${comb}
           </td>
           <td>
+            <div class="image-upload" data-variant-name="${comb}">
+              <div class="upload-icon">📁</div>
+              <div class="upload-text">Click or drag image</div>
+              <img class="image-preview" src="${this.variantsData.get(comb)?.image || ''}">
+              <button class="remove-image" title="Remove image">×</button>
+              <input type="file" accept="image/*" style="display:none;">
+            </div>
+          </td>
+          <td>
             <input type="text" class="variant-price-input" placeholder="0.00" 
-                   value="${this.variantsData.get(comb) || '2,000.00'}" 
+                   value="${this.variantsData.get(comb)?.price || '2,000.00'}" 
                    data-variant-name="${comb}">
           </td>
         </tr>
       `).join("");
+      
+      // Initialize image upload for preview rows
+      this.initImageUploads();
     } else {
       this.querySelector("#variants-table-body").innerHTML = "";
     }
     this.updateVariantsVisibility();
   }
+
+  initImageUploads() {
+    this.querySelectorAll('.image-upload').forEach(uploadArea => {
+      const fileInput = uploadArea.querySelector('input[type="file"]');
+      const preview = uploadArea.querySelector('.image-preview');
+      const removeBtn = uploadArea.querySelector('.remove-image');
+      const variantName = uploadArea.dataset.variantName;
+      const variantData = this.variantsData.get(variantName) || {};
+  
+      // Show existing image if available
+      if (variantData.image) {
+        preview.src = variantData.image;
+        uploadArea.classList.add('has-image');
+      }
+  
+      uploadArea.addEventListener('click', (e) => {
+        // Prevent the event from bubbling up to the row
+        e.stopPropagation();
+        
+        if (e.target !== removeBtn && e.target !== fileInput) {
+          fileInput.click();
+        }
+      });
+  
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            preview.src = event.target.result;
+            uploadArea.classList.add('has-image');
+            
+            // Update data immediately
+            const variantData = this.variantsData.get(variantName) || {};
+            variantData.image = event.target.result;
+            this.variantsData.set(variantName, variantData);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+  
+      removeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        preview.src = '';
+        uploadArea.classList.remove('has-image');
+        
+        // Update data
+        const variantData = this.variantsData.get(variantName) || {};
+        delete variantData.image;
+        this.variantsData.set(variantName, variantData);
+      });
+  
+      // Drag and drop handlers (same as in your existing code)
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#1976d2';
+        uploadArea.style.background = '#f0f7ff';
+      });
+      
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = '#ddd';
+        uploadArea.style.background = '';
+      });
+      
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#ddd';
+        uploadArea.style.background = '';
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.match('image.*')) {
+          fileInput.files = e.dataTransfer.files;
+          fileInput.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+  }
+
   
   updateVariantsSection() {
     const combinations = this.generateAllCombinations();
@@ -941,32 +735,34 @@ toggleVariantSelection(checkbox) {
     
     tableBody.innerHTML = combinations.map(comb => {
       const variantData = this.variantsData.get(comb) || {};
-      const hasImage = !!variantData.image;
+      
       
       return `
-        <tr data-variant-name="${comb}">
-          <td>
-            <input type="checkbox" class="variant-checkbox" 
-                  ${this.selectedVariants.has(comb) ? 'checked' : ''}>
-            ${comb}
-          </td>
-          <td>
-            <div class="image-upload ${hasImage ? 'has-image' : ''}" data-variant-name="${comb}">
-              <div class="upload-icon">📁</div>
-              <div class="upload-text">Click or drag image</div>
-              <img class="image-preview" src="${variantData.image || ''}">
-              <button class="remove-image" title="Remove image">×</button>
-              <input type="file" accept="image/*" style="display:none;">
-            </div>
-          </td>
-          <td>
-            <input type="text" class="variant-price-input" placeholder="0.00" 
-                   value="${variantData.price || '2,000.00'}"
-                   data-variant-name="${comb}">
-          </td>
-        </tr>
-      `;
-    }).join("");
+      <tr data-variant-name="${comb}">
+        <td>
+          <input type="checkbox" class="variant-checkbox" 
+              ${this.selectedVariants.has(comb) ? 'checked' : ''}>
+          <span>${comb}</span>
+        </td>
+        <td>
+          <div class="image-upload ${variantData.image ? 'has-image' : ''}" data-variant-name="${comb}">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">Click or drag image</div>
+            <img class="image-preview" src="${variantData.image || ''}">
+            <button class="remove-image" title="Remove image">×</button>
+            <input type="file" accept="image/*" style="display:none;">
+          </div>
+        </td>
+        <td>
+          <input type="text" class="variant-price-input" placeholder="0.00" 
+                 value="${variantData.price || '2,000.00'}"
+                 data-variant-name="${comb}">
+        </td>
+      </tr>
+    `;
+  }).join("");
+
+  this.initImageUploads();
   
     // Initialize image upload functionality
     this.querySelectorAll('.image-upload').forEach(uploadArea => {
