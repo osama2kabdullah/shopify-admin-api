@@ -16,7 +16,52 @@ class DetailView extends HTMLElement {
   initMarkup() {
     this.innerHTML = `
       <style>
-        
+        .variants-section {
+        position: relative;
+        margin-top: 20px;
+      }
+      
+      .variants-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      /* Make the table container scrollable */
+      .variants-table-container {
+        max-height: 400px; /* Adjust this value as needed */
+        overflow-y: auto;
+        border: 1px solid #ddd;
+      }
+      
+      /* Sticky table header */
+      .variants-table thead {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+      }
+      
+      /* Table styling */
+      .variants-table th, .variants-table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+      
+      .variants-table th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+      }
+      
+      .variants-table tr:hover {
+        background-color: #f5f5f5;
+      }
+      
+      /* Add some spacing between sections */
+      .option-groups {
+        margin-bottom: 20px;
+      }
 
       </style>
       
@@ -652,7 +697,10 @@ toggleVariantSelection(checkbox) {
     this.updateVariantsVisibility();
   }
 
+  
+
   initImageUploads() {
+    console.log('initImageUploads called');
     this.querySelectorAll('.image-upload').forEach(uploadArea => {
       const fileInput = uploadArea.querySelector('input[type="file"]');
       const preview = uploadArea.querySelector('.image-preview');
@@ -666,15 +714,26 @@ toggleVariantSelection(checkbox) {
         uploadArea.classList.add('has-image');
       }
   
+      // Prevent multiple clicks on the same area
+      let isFileDialogOpen = false;
+  
       uploadArea.addEventListener('click', (e) => {
-        // Prevent the event from bubbling up to the row
         e.stopPropagation();
-        
-        if (e.target !== removeBtn && e.target !== fileInput) {
+        console.log('Upload area clicked');
+      
+        if (!uploadArea.isDialogOpen && e.target !== removeBtn && e.target !== fileInput) {
+          console.log('Triggering file input dialog');
+          uploadArea.isDialogOpen = true;
           fileInput.click();
+      
+          const resetFlag = () => {
+            uploadArea.isDialogOpen = false;
+            window.removeEventListener('focus', resetFlag);
+          };
+          window.addEventListener('focus', resetFlag);
         }
       });
-  
+      
       fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -682,7 +741,6 @@ toggleVariantSelection(checkbox) {
           reader.onload = (event) => {
             preview.src = event.target.result;
             uploadArea.classList.add('has-image');
-            
             // Update data immediately
             const variantData = this.variantsData.get(variantName) || {};
             variantData.image = event.target.result;
@@ -690,31 +748,32 @@ toggleVariantSelection(checkbox) {
           };
           reader.readAsDataURL(file);
         }
+        // Reset the flag after a short delay to handle the case where the dialog is canceled
+        setTimeout(() => {
+          isFileDialogOpen = false;
+        }, 500); // Adjust the delay as needed
       });
   
       removeBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         preview.src = '';
         uploadArea.classList.remove('has-image');
-        
         // Update data
         const variantData = this.variantsData.get(variantName) || {};
         delete variantData.image;
         this.variantsData.set(variantName, variantData);
       });
   
-      // Drag and drop handlers (same as in your existing code)
+      // Drag and drop handlers
       uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.style.borderColor = '#1976d2';
         uploadArea.style.background = '#f0f7ff';
       });
-      
       uploadArea.addEventListener('dragleave', () => {
         uploadArea.style.borderColor = '#ddd';
         uploadArea.style.background = '';
       });
-      
       uploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
         uploadArea.style.borderColor = '#ddd';
@@ -726,7 +785,7 @@ toggleVariantSelection(checkbox) {
         }
       });
     });
-  }
+}
 
   
   updateVariantsSection() {
@@ -762,7 +821,7 @@ toggleVariantSelection(checkbox) {
     `;
   }).join("");
 
-  this.initImageUploads();
+  
   
     // Initialize image upload functionality
     this.querySelectorAll('.image-upload').forEach(uploadArea => {
@@ -773,6 +832,7 @@ toggleVariantSelection(checkbox) {
       
       // Click to select file
       uploadArea.addEventListener('click', (e) => {
+        e.stopPropagation();
         if (e.target !== removeBtn) {
           fileInput.click();
         }
