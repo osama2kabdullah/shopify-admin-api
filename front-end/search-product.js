@@ -178,32 +178,35 @@ class SearchForm extends HTMLElement {
       this.results.style.display = "block";
       return;
     }
-
+  
     // Clear previous content
     this.results.innerHTML = "";
-
+  
     items.forEach((user) => {
       const card = document.createElement("div");
       card.classList.add("result-card");
-
+      card.dataset.id = user.id; // Move the ID to the card itself
+      card.style.cursor = "pointer"; // Show pointer cursor for entire card
+  
       card.innerHTML = `
-        <strong class="result-title" data-id="${user.id}" style="cursor:pointer; color:blue; text-decoration:underline;">
+        <strong class="result-title">
           ${user.name}
         </strong>
         <p>${user.email}</p>
       `;
-
+  
       // Append the card to results container
       this.results.appendChild(card);
-
-      // Add click event to title after it's added to DOM
-      const titleEl = card.querySelector(".result-title");
-      titleEl.addEventListener("click", (e) => {
-        const id = e.target.dataset.id;
-        this.showDetailView(id);
+  
+      // Add click event to the entire card
+      card.addEventListener("click", (e) => {
+        // Prevent triggering if clicking on a link inside the card
+        if (e.target.tagName !== 'A') {
+          this.showDetailView(user.id);
+        }
       });
     });
-
+  
     this.results.style.display = "block";
   }
 
@@ -231,7 +234,7 @@ class SearchForm extends HTMLElement {
     // Inject your detail HTML here (for now just dummy)
     this.results.innerHTML = `
       <div class="detail-view">
-        <button id="back-to-results" style="margin-bottom: 10px;">⬅ Back</button>
+        <button id="back-to-results">⬅ Back</button>
         <detail-view></detail-view>
       </div>
     `;
@@ -258,7 +261,10 @@ class SearchForm extends HTMLElement {
   
     // Use HTML with a cross icon
     clearButton.innerHTML = `
+     <div>
+     <i class="fas fa-times"></i>
      <b> <span>Clear</span> </b>
+     </div>
       
     `;
   

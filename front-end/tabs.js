@@ -63,6 +63,63 @@ class DetailView extends HTMLElement {
         margin-bottom: 20px;
       }
 
+      /* Updated header styles */
+      .bulk-actions-header {
+        display: flex;
+        align-items: center;
+        
+        width: 100%;
+      }
+
+       .header-actions {
+        display: flex;
+        align-items: center;
+      }
+      
+      .header-left {
+        display: flex;
+        align-items: center;
+        flex-grow: 1; /* Allow this to take available space *
+      }
+      
+      .selected-count {
+        font-weight: normal;
+        color: #666;
+        margin-left: 8px;
+      }
+      
+      .variant-checkbox {
+        margin-right: 8px;
+      }
+      
+      .bulk-delete-btn {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        color: #333;
+        cursor: pointer;
+        padding: 6px 12px;
+        font-size: 14px;
+        border-radius: 4px;
+        margin-left: 100px;
+      }
+      
+      .bulk-delete-btn:hover {
+        background: #e9ecef;
+        text-decoration: none;
+      }
+
+       .header-delete-btn {
+        margin-left: auto; /* Push delete button to the right */
+      }
+
+      .selection-mode .variants-table th:nth-child(1) .header-text {
+        display: none;
+      }
+      .selection-mode .variants-table th:nth-child(2),
+      .selection-mode .variants-table th:nth-child(3) {
+        color: transparent; /* Hide text but keep column width */
+      }
+
       </style>
       
       <div class="option-groups">
@@ -74,18 +131,24 @@ class DetailView extends HTMLElement {
       <table class="variants-table">
         <thead>
           <tr>
-            <th><input type="checkbox" id="select-all-variants" class="variant-checkbox"> Variant</th>
+            <th>
+              <div class="bulk-actions-header">
+                <div class="header-left">
+                  <input type="checkbox" id="select-all-variants" class="variant-checkbox">
+                  <span class="header-text">Variant</span>
+                  <span class="selected-count"></span>
+                </div>
+                <div class="header-actions">
+                  <button class="bulk-delete-btn" style="display:none;">Delete</button>
+                </div>
+              </div>
+            </th>
             <th>Image</th>
             <th>Price</th>
           </tr>
         </thead>
-        <tbody id="variants-table-body">
-          <!-- Variants will be added here dynamically -->
-        </tbody>
+        <tbody id="variants-table-body"></tbody>
       </table>
-      <div class="bulk-actions" id="bulk-actions">
-        <button class="bulk-delete-btn">Delete Selected</button>
-      </div>
       <button class="save-all-btn" id="save-all-btn">Save All Changes</button>
     </div>
   `;
@@ -211,14 +274,34 @@ toggleVariantSelection(checkbox) {
   this.updateBulkActions();
 }
 
-  updateBulkActions() {
-    const bulkActions = this.querySelector("#bulk-actions");
-    bulkActions.classList.toggle("visible", this.selectedVariants.size > 0);
-    
-    const bulkDeleteBtn = this.querySelector(".bulk-delete-btn");
-    bulkDeleteBtn.onclick = () => this.deleteSelectedVariants();
-  }
+updateBulkActions() {
+  const selectedCount = this.selectedVariants.size;
+  const variantsSection = this.querySelector(".variants-section");
+  const selectedCountEl = this.querySelector(".selected-count");
+  const headerTextEl = this.querySelector(".header-text");
+  const bulkDeleteBtn = this.querySelector(".bulk-delete-btn"); // Get the delete button
 
+  if (selectedCount > 0) {
+    // Activate selection mode
+    variantsSection.classList.add("selection-mode");
+    selectedCountEl.textContent = `${selectedCount} selected`;
+    headerTextEl.style.display = "none";
+    bulkDeleteBtn.style.display = "block"; // Show the delete button
+    
+    // Set up delete button handler
+    bulkDeleteBtn.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.deleteSelectedVariants();
+    };
+  } else {
+    // Revert to default
+    variantsSection.classList.remove("selection-mode");
+    selectedCountEl.textContent = "";
+    headerTextEl.style.display = "inline";
+    bulkDeleteBtn.style.display = "none"; // Hide the delete button
+  }
+}
   generateAllCombinations() {
     const savedOptions = this.querySelectorAll(".saved-option");
     if (savedOptions.length === 0) return [];
